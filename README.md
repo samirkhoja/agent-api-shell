@@ -2,6 +2,8 @@
 
 `agent-api-shell` is a standalone Go library that exposes a minimal pseudo shell for LLM-driven tool discovery and execution.
 
+It is designed for setups where you may want to configure hundreds of API-backed tools without dumping hundreds of tool definitions into the model context up front. The model can stay on a small interface surface and interact in a way that feels closer to working in a shell or terminal: explore what is available with `discover`, inspect a specific tool with `describe`, and only invoke the command it needs with `run`.
+
 HTTP-backed commands default to a 5 minute request deadline and a 1 MiB response body limit. You can override these per command with `timeout_ms` and `max_response_body_bytes`.
 
 ## Capabilities
