@@ -104,6 +104,40 @@ func TestShellRegisterDiscoverDescribeAndExecuteCustomCommand(t *testing.T) {
 	}
 }
 
+func TestShellExecuteListReturnsAllCommands(t *testing.T) {
+	shell, err := New(Config{Commands: []CommandSpec{{
+		Name:      "weather",
+		ShortHelp: "Fetch weather",
+		HTTP:      &HTTPSpec{Method: http.MethodGet, URL: "https://example.com/weather"},
+	}}})
+	if err != nil {
+		t.Fatalf("New returned error: %v", err)
+	}
+	if err := shell.Register(echoCommand{}); err != nil {
+		t.Fatalf("Register returned error: %v", err)
+	}
+
+	result, err := shell.Execute(context.Background(), `list`)
+	if err != nil {
+		t.Fatalf("Execute returned error: %v", err)
+	}
+	if !result.OK || result.Verb != "list" {
+		t.Fatalf("unexpected result: %#v", result)
+	}
+
+	summaries, ok := result.Output.([]CommandSummary)
+	if !ok {
+		t.Fatalf("unexpected output: %#v", result.Output)
+	}
+	want := []CommandSummary{
+		{Name: "echo", ShortHelp: "Echo a message"},
+		{Name: "weather", ShortHelp: "Fetch weather"},
+	}
+	if !reflect.DeepEqual(summaries, want) {
+		t.Fatalf("unexpected output: %#v", summaries)
+	}
+}
+
 func TestNewRejectsDuplicateCommands(t *testing.T) {
 	_, err := New(Config{Commands: []CommandSpec{
 		{Name: "weather", ShortHelp: "one", HTTP: &HTTPSpec{Method: http.MethodGet, URL: "https://example.com/one"}},

@@ -8,6 +8,7 @@ import (
 
 const (
 	VerbDiscover = "discover"
+	VerbList     = "list"
 	VerbDescribe = "describe"
 	VerbRun      = "run"
 )
@@ -40,6 +41,11 @@ func ParseLine(line string) (ParsedCommand, error) {
 	switch tokens[0] {
 	case VerbDiscover:
 		parsed.Query = strings.Join(tokens[1:], " ")
+		return parsed, nil
+	case VerbList:
+		if len(tokens) != 1 {
+			return ParsedCommand{}, fmt.Errorf("list does not accept arguments")
+		}
 		return parsed, nil
 	case VerbDescribe:
 		if len(tokens) != 2 {

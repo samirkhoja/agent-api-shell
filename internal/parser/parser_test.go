@@ -18,6 +18,16 @@ func TestParseDiscover(t *testing.T) {
 	}
 }
 
+func TestParseList(t *testing.T) {
+	parsed, err := ParseLine(`list`)
+	if err != nil {
+		t.Fatalf("ParseLine returned error: %v", err)
+	}
+	if parsed.Verb != VerbList {
+		t.Fatalf("unexpected verb: %q", parsed.Verb)
+	}
+}
+
 func TestParseDescribe(t *testing.T) {
 	parsed, err := ParseLine(`describe weather`)
 	if err != nil {
@@ -46,6 +56,12 @@ func TestParseRunFlags(t *testing.T) {
 func TestParseRejectsMissingFlagValue(t *testing.T) {
 	if _, err := ParseLine(`run weather --city`); err == nil {
 		t.Fatal("expected error for missing flag value")
+	}
+}
+
+func TestParseRejectsListArguments(t *testing.T) {
+	if _, err := ParseLine(`list weather`); err == nil {
+		t.Fatal("expected error for list arguments")
 	}
 }
 

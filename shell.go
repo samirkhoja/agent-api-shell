@@ -100,6 +100,8 @@ func (s *Shell) Execute(ctx context.Context, line string) (Result, error) {
 	}
 
 	switch parsed.Verb {
+	case parser.VerbList:
+		return Result{OK: true, Verb: parser.VerbList, Output: s.Discover("")}, nil
 	case parser.VerbDiscover:
 		return Result{OK: true, Verb: parser.VerbDiscover, Output: s.Discover(parsed.Query)}, nil
 	case parser.VerbDescribe:
